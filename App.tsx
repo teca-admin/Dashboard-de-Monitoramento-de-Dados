@@ -101,7 +101,7 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* InfoBar de Métricas - Cantos Retos e Visual Limpo */}
+        {/* InfoBar de Métricas */}
         <div className="w-full bg-white rounded-sm p-2 flex items-center justify-between shadow-md border border-slate-200 mb-3 shrink-0 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-0.5 h-full bg-blue-600"></div>
           <div className="flex gap-10 pl-4">
@@ -120,14 +120,16 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content Area */}
+      {/* Main Content Area - Animações reduzidas para 150ms */}
       <main className="w-full max-w-[1600px] mx-auto flex-grow overflow-hidden">
         {activeTab === 'dados' ? (
-          <div className="h-full animate-in slide-in-from-right-10 duration-500">
+          <div className="h-full animate-in fade-in slide-in-from-bottom-2 duration-150 ease-out">
             <DataTable data={filteredData} loading={state.loading} />
           </div>
         ) : (
-          <DashboardView data={state.data} loading={state.loading} />
+          <div className="h-full animate-in fade-in duration-150 ease-out">
+            <DashboardView data={state.data} loading={state.loading} />
+          </div>
         )}
       </main>
 

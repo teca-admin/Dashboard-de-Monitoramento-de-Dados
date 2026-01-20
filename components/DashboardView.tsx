@@ -55,7 +55,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ data, loading }) => {
   if (!analytics) return null;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 h-[calc(100vh-230px)] min-h-[450px] animate-in fade-in zoom-in-95 duration-700 overflow-hidden">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 h-[calc(100vh-230px)] min-h-[450px] overflow-hidden">
       
       {/* Bloco Esquerdo: Turnos e Domínio */}
       <div className="lg:col-span-8 flex flex-col gap-3 overflow-hidden">
