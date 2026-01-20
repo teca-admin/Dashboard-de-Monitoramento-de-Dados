@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { SheetRow } from '../types';
 
 interface DashboardViewProps {
@@ -8,120 +8,24 @@ interface DashboardViewProps {
 }
 
 const DashboardView: React.FC<DashboardViewProps> = ({ data, loading }) => {
-  const analytics = useMemo(() => {
-    if (data.length === 0) return null;
-
-    const sectorMap: Record<string, number> = {};
-    data.forEach(row => {
-      sectorMap[row.setor] = (sectorMap[row.setor] || 0) + 1;
-    });
-    const topSectors = Object.entries(sectorMap)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
-
-    const simCount = data.filter(r => r.resposta.toLowerCase() === 'sim').length;
-    const naoCount = data.filter(r => r.resposta.toLowerCase() === 'não').length;
-    const totalResp = simCount + naoCount;
-    const conformityRate = totalResp > 0 ? (simCount / totalResp) * 100 : 0;
-
-    return {
-      topSectors,
-      conformityRate,
-      simCount,
-      naoCount,
-      totalEntries: data.length
-    };
-  }, [data]);
-
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {[1, 2, 3, 4, 5, 6].map(i => (
+        {[1, 2, 3].map(i => (
           <div key={i} className="h-72 bg-white border border-slate-200 animate-pulse"></div>
         ))}
       </div>
     );
   }
 
-  if (!analytics) return null;
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-16 animate-in fade-in duration-700">
-      
-      {/* Conformidade Geral - Chart Minimalista */}
-      <div className="lg:col-span-4 bg-white p-10 border border-slate-200 shadow-sm flex flex-col items-center justify-center">
-        <h3 className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 text-center border-b border-slate-100 pb-3 w-full">KPI: Conformidade Operacional</h3>
-        
-        <div className="relative w-44 h-44 flex items-center justify-center">
-          <svg className="w-full h-full transform -rotate-90">
-            <circle
-              cx="88"
-              cy="88"
-              r="78"
-              stroke="currentColor"
-              strokeWidth="6"
-              fill="transparent"
-              className="text-slate-100"
-            />
-            <circle
-              cx="88"
-              cy="88"
-              r="78"
-              stroke="currentColor"
-              strokeWidth="6"
-              fill="transparent"
-              strokeDasharray={2 * Math.PI * 78}
-              strokeDashoffset={2 * Math.PI * 78 * (1 - analytics.conformityRate / 100)}
-              strokeLinecap="butt"
-              className="text-slate-900 transition-all duration-1000 ease-in-out"
-            />
-          </svg>
-          <div className="absolute flex flex-col items-center">
-            <span className="text-4xl font-bold text-slate-900 tracking-tighter">{analytics.conformityRate.toFixed(1)}%</span>
-            <span className="text-[9px] font-bold text-blue-600 uppercase tracking-widest mt-1">Conforme</span>
-          </div>
-        </div>
-
-        <div className="mt-12 grid grid-cols-2 w-full pt-8 border-t border-slate-50 gap-4">
-          <div className="text-center">
-            <p className="text-xl font-bold text-slate-900">{analytics.simCount}</p>
-            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Aprovações</p>
-          </div>
-          <div className="text-center border-l border-slate-100">
-            <p className="text-xl font-bold text-slate-900">{analytics.naoCount}</p>
-            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Não-Conf.</p>
-          </div>
-        </div>
+    <div className="flex flex-col items-center justify-center py-32 border border-dashed border-slate-200 bg-slate-50/50">
+      <div className="w-12 h-12 bg-slate-100 flex items-center justify-center mb-4 border border-slate-200">
+        <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
       </div>
-
-      {/* Volume por Setor - Barras Técnicas */}
-      <div className="lg:col-span-8 bg-white p-10 border border-slate-200 shadow-sm">
-        <h3 className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-10 border-b border-slate-100 pb-3">Análise de Volumetria Segmentada</h3>
-        
-        <div className="space-y-8">
-          {analytics.topSectors.map(([name, count], idx) => {
-            const percentage = (count / analytics.totalEntries) * 100;
-            return (
-              <div key={name} className="group">
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-3 uppercase tracking-tight">
-                    <span className="text-slate-300 font-mono">0{idx + 1}</span>
-                    {name}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tabular-nums">{count} Registros</span>
-                </div>
-                <div className="h-1.5 w-full bg-slate-50 rounded-none overflow-hidden">
-                  <div 
-                    className="h-full bg-slate-900 transition-all duration-1000 ease-out"
-                    style={{ width: `${percentage}%` }}
-                  ></div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Módulo de Análise Gráfica Suspenso</p>
     </div>
   );
 };
